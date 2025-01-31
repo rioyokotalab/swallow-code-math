@@ -169,7 +169,7 @@ def main(args: argparse.Namespace) -> None:
 
         print(f"Processed batch {batch_idx + 1} in {time.perf_counter() - start:.2f}s", flush=True)
 
-        if len(processed_data) >= batch_size * 20:
+        if len(processed_data) >= batch_size * 2:
             write_results(processed_data, args.output_path, mode="a")
             processed_data = []
 
