@@ -74,7 +74,7 @@ def main(args: argparse.Namespace) -> None:
         model=args.model_path,
         tensor_parallel_size=args.tensor_parallel,
         dtype="bfloat16",
-        gpu_memory_utilization=0.9,
+        gpu_memory_utilization=0.95,
         max_model_len=102688,
     )
 
@@ -102,65 +102,74 @@ def main(args: argparse.Namespace) -> None:
     tokenizer = AutoTokenizer.from_pretrained(args.model_path)
 
     processed_data = []
-    for idx, item in enumerate(data[start_index:], start=start_index + 1):
+    batch_size = args.batch_size
+    batches = [data[i:i + batch_size] for i in range(start_index, len(data), batch_size)]
+
+    for batch_idx, batch in enumerate(batches):
         start = time.perf_counter()
-        code_text: str = item["text"]
-        messages: list[dict[str, str]] = [
-            {"role": "system", "content":
-                """You are a smart software engineer. Please evaluate the following code on a scale of 1 to 10 based on the following criteria:\n
-                1. Are variable names descriptive and consistent with naming conventions?
-                2. Are comments and doc-strings appropriately written to explain the purpose and functionality of the code?
-                3. Are type annotations used effectively where applicable?
-                4. Are functions appropriately modularized, with well-defined responsibilities and clear separation of concerns?
-                5. Are variables' lifetimes intentionally managed, avoiding frequent reassignment or overly long scopes?
-                6. Is error handling implemented appropriately where necessary?
-                7. Is the code properly indented and follows standard formatting guidelines?
-                8. Do comments provide context and rationale, rather than merely describing what the code does?
-                9. Are functions and classes designed with clear, single responsibilities?
-                10. Is the code formatted in a way that enhances readability?\n\n
-                And provide suggestions for improvement based on the evaluation criteria. You can also provide an improved version of the code like the following style:\n
-                ### Evaluation: 7\n\n
-                ### Suggestions:\n
-                    Provide specific, actionable suggestions to improve the code based on the evaluation criteria.\n\n
-                ### Improved Code:\n
-                Provide a revised version of the code incorporating the suggested improvements.\n
-                ```python\n
-                def improved_function(arg1: int, arg2: str) -> str:
-                    # Your improved code here
-                    pass
-                ```\n\n
-                """},
-            {"role": "user", "content": code_text},
-        ]
-        text: str = tokenizer.apply_chat_template(  # type: ignore
-            messages,
-            tokenize=False,
-            add_generation_prompt=True,
-        )
+        texts = []
+        for item in batch:
+            code_text: str = item["text"]
+            messages: list[dict[str, str]] = [
+                {"role": "system", "content":
+                    """You are a smart software engineer. Please evaluate the following code on a scale of 1 to 10 based on the following criteria:\n
+                    1. Are variable names descriptive and consistent with naming conventions?
+                    2. Are comments and doc-strings appropriately written to explain the purpose and functionality of the code?
+                    3. Are type annotations used effectively where applicable?
+                    4. Are functions appropriately modularized, with well-defined responsibilities and clear separation of concerns?
+                    5. Are variables' lifetimes intentionally managed, avoiding frequent reassignment or overly long scopes?
+                    6. Is error handling implemented appropriately where necessary?
+                    7. Is the code properly indented and follows standard formatting guidelines?
+                    8. Do comments provide context and rationale, rather than merely describing what the code does?
+                    9. Are functions and classes designed with clear, single responsibilities?
+                    10. Is the code formatted in a way that enhances readability?\n\n
+                    And provide suggestions for improvement based on the evaluation criteria. You can also provide an improved version of the code like the following style:\n
+                    ### Evaluation: 7\n\n
+                    ### Suggestions:\n
+                        Provide specific, actionable suggestions to improve the code based on the evaluation criteria.\n\n
+                    ### Improved Code:\n
+                    Provide a revised version of the code incorporating the suggested improvements.\n
+                    ```python\n
+                    def improved_function(arg1: int, arg2: str) -> str:
+                        # Your improved code here
+                        pass
+                    ```\n\n
+                    """},
+                {"role": "user", "content": code_text},
+            ]
+            text: str = tokenizer.apply_chat_template(  # type: ignore
+                messages,
+                tokenize=False,
+                add_generation_prompt=True,
+            )
+            texts.append(text)
 
-        outputs = llm.generate(text, sampling_params)
-        output_text = outputs[0].outputs[0].text
+        outputs = llm.generate(texts, sampling_params)
 
-        if args.verbose:
-            print(output_text, flush=True)
+        for i, output in enumerate(outputs):
+            output_text = output.outputs[0].text
+            if args.verbose:
+                print(output_text, flush=True)
 
-        results = parse_sections(output_text)
-        for key, value in results.items():
-            if key == "evaluation_score":
-                item["score"] = value or -1
-            elif key == "suggestions":
-                item["suggestions"] = value or []
-            elif key == "improved_code":
-                item["improved_code"] = value or ""
-            else:
-                item[key] = value
+            results = parse_sections(output_text)
+            item = batch[i]
+            for key, value in results.items():
+                if key == "evaluation_score":
+                    item["score"] = value or -1
+                elif key == "suggestions":
+                    item["suggestions"] = value or []
+                elif key == "improved_code":
+                    item["improved_code"] = value or ""
+                else:
+                    item[key] = value
 
-        item["generated_text"] = output_text
-        item["index"] = idx - 1  # Adjust index to match the original data
-        processed_data.append(item)
-        print(f"Processed item {idx} in {time.perf_counter() - start:.2f}s", flush=True)
+            item["generated_text"] = output_text
+            item["index"] = start_index + batch_idx * batch_size + i  # Adjust index to match the original data
+            processed_data.append(item)
 
-        if len(processed_data) == 20:
+        print(f"Processed batch {batch_idx + 1} in {time.perf_counter() - start:.2f}s", flush=True)
+
+        if len(processed_data) >= batch_size * 20:
             write_results(processed_data, args.output_path, mode="a")
             processed_data = []
 
@@ -173,6 +182,7 @@ if __name__ == "__main__":
     parser.add_argument("--model-path", type=str)
     parser.add_argument("--jsonl-path", help="Path to the input JSONL file")
     parser.add_argument("--output-path", help="Path to save the output JSONL file with Japanese entries")
+    parser.add_argument("--batch-size", type=int, default=8, help="Batch size for processing")
     parser.add_argument("--verbose", action="store_true", help="Print verbose output")
     parser.add_argument("--resume", action="store_true", help="Resume from the last processed index")
     parser.add_argument("--tensor-parallel", type=int, default=1, help="Tensor parallel size")
