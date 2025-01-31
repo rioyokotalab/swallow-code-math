@@ -27,10 +27,14 @@ mkdir -p "$OUTPUT_DIR"
 INDEX=$1
 FORMATTED_INDEX=$(printf "%04d" $INDEX)
 
+BATCH_SIZE=256
+
+echo "batch size: $BATCH_SIZE"
+
 python src/code_score_refactor.py \
   --model-path "/gs/bs/tga-NII-LLM/hf-checkpoints/Llama-3.3-70B-Instruct" \
   --jsonl-path "$INPUT_DIR/split_$FORMATTED_INDEX.jsonl" \
   --output-path "$OUTPUT_DIR/python_scoring_Llama-3.3-70B-split_$FORMATTED_INDEX.jsonl" \
-  --verbose \
   --tensor-parallel 2 \
-  --resume
+  --resume \
+  --batch-size $BATCH_SIZE
