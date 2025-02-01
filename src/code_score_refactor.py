@@ -52,7 +52,11 @@ def parse_sections(text):
     for section, content in sections.items():
         if section.startswith('Evaluation:'):
             score = section.split(':')[1].strip()
-            results['evaluation_score'] = int(score)
+            try:
+                score = float(score)
+            except ValueError:
+                score = -1
+            results['evaluation_score'] = score
 
         elif section == 'Suggestions:':
             results['suggestions'] = [s.strip() for s in content.split('\n') if s.strip()]
@@ -74,7 +78,7 @@ def main(args: argparse.Namespace) -> None:
         model=args.model_path,
         tensor_parallel_size=args.tensor_parallel,
         dtype="bfloat16",
-        gpu_memory_utilization=0.95,
+        gpu_memory_utilization=0.9,
         max_model_len=102688,
     )
 
