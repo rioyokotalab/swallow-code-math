@@ -78,7 +78,7 @@ def main(args: argparse.Namespace) -> None:
         model=args.model_path,
         tensor_parallel_size=args.tensor_parallel,
         dtype="bfloat16",
-        gpu_memory_utilization=0.95,
+        gpu_memory_utilization=0.9,
         max_model_len=102688,
     )
 

@@ -27,7 +27,7 @@ mkdir -p "$OUTPUT_DIR"
 INDEX=$1
 FORMATTED_INDEX=$(printf "%04d" $INDEX)
 
-BATCH_SIZE=256
+BATCH_SIZE=128
 
 echo "batch size: $BATCH_SIZE"
 
