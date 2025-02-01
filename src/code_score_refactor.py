@@ -52,7 +52,11 @@ def parse_sections(text):
     for section, content in sections.items():
         if section.startswith('Evaluation:'):
             score = section.split(':')[1].strip()
-            results['evaluation_score'] = int(score)
+            try:
+                score = float(score)
+            except ValueError:
+                score = -1
+            results['evaluation_score'] = score
 
         elif section == 'Suggestions:':
             results['suggestions'] = [s.strip() for s in content.split('\n') if s.strip()]
