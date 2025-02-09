@@ -12,10 +12,7 @@ module load ninja/1.11.1
 pip install --upgrade pip
 pip install --upgrade wheel cmake ninja packaging
 
-pip install torch torchvision --index-url https://download.pytorch.org/whl/cu124
-
 pip install -r requirements.txt
 
-export MAX_JOBS=8
+pip install flashinfer-python -i https://flashinfer.ai/whl/cu124/torch2.5/
 
-pip install flash-attn==2.5.8 --no-build-isolation
