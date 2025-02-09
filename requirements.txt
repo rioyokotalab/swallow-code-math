@@ -1,2 +1,2 @@
 transformers
-vllm
+vllm==0.7.2
