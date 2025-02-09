@@ -1,6 +1,6 @@
 #!/bin/sh
 #$ -cwd
-#$ -l node_h=1
+#$ -l node_f=1
 #$ -l h_rt=0:24:00:00
 #$ -o outputs/llm-filter/llama-3.3-70b-instruct/$JOB_ID.log
 #$ -e outputs/llm-filter/llama-3.3-70b-instruct/$JOB_ID.log
@@ -27,14 +27,16 @@ mkdir -p "$OUTPUT_DIR"
 INDEX=$1
 FORMATTED_INDEX=$(printf "%04d" $INDEX)
 
-BATCH_SIZE=128
+BATCH_SIZE=2048
 
 echo "batch size: $BATCH_SIZE"
+
+export VLLM_USE_V1=1
 
 python src/code_score_refactor.py \
   --model-path "/gs/bs/tga-NII-LLM/hf-checkpoints/Llama-3.3-70B-Instruct" \
   --jsonl-path "$INPUT_DIR/split_$FORMATTED_INDEX.jsonl" \
   --output-path "$OUTPUT_DIR/python_scoring_Llama-3.3-70B-split_$FORMATTED_INDEX.jsonl" \
-  --tensor-parallel 2 \
+  --tensor-parallel 4 \
   --resume \
   --batch-size $BATCH_SIZE
