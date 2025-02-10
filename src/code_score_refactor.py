@@ -1,11 +1,10 @@
+import argparse
 import json
-import time
 import os
 import re
-import torch
-import argparse
-from transformers import AutoTokenizer
+import time
 
+from transformers import AutoTokenizer
 from vllm import LLM, SamplingParams
 
 
