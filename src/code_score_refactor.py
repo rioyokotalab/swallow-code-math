@@ -60,39 +60,41 @@ def parse_sections(text):
     current_section = None
     current_content = []
 
-    for line in text.split('\n'):
-        if line.startswith('###'):
+    for line in text.split("\n"):
+        if line.startswith("###"):
             if current_section:
-                sections[current_section] = '\n'.join(current_content).strip()
+                sections[current_section] = "\n".join(current_content).strip()
             current_section = line[4:].strip()  # eliminate ###
             current_content = []
         else:
             current_content.append(line)
 
     if current_section:
-        sections[current_section] = '\n'.join(current_content).strip()
+        sections[current_section] = "\n".join(current_content).strip()
 
     results = {}
 
     for section, content in sections.items():
-        if section.startswith('Evaluation:'):
-            score = section.split(':')[1].strip()
+        if section.startswith("Evaluation:"):
+            score = section.split(":")[1].strip()
             try:
                 score = float(score)
             except ValueError:
                 score = -1
-            results['evaluation_score'] = score
+            results["evaluation_score"] = score
 
-        elif section == 'Suggestions:':
-            results['suggestions'] = [s.strip() for s in content.split('\n') if s.strip()]
+        elif section == "Suggestions:":
+            results["suggestions"] = [
+                s.strip() for s in content.split("\n") if s.strip()
+            ]
 
-        elif section == 'Improved Code:':
-            code_match = re.search(r'```python\n(.*?)\n```', content, re.DOTALL)
+        elif section == "Improved Code:":
+            code_match = re.search(r"```python\n(.*?)\n```", content, re.DOTALL)
             if code_match:
-                results['improved_code'] = code_match.group(1).strip()
+                results["improved_code"] = code_match.group(1).strip()
         else:
             # other sections
-            results[section.lower().replace(' ', '_')] = content
+            results[section.lower().replace(" ", "_")] = content
 
     return results
 
@@ -132,7 +134,9 @@ def main(args: argparse.Namespace) -> None:
 
     processed_data = []
     batch_size = args.batch_size
-    batches = [data[i:i + batch_size] for i in range(start_index, len(data), batch_size)]
+    batches = [
+        data[i : i + batch_size] for i in range(start_index, len(data), batch_size)
+    ]
 
     for batch_idx, batch in enumerate(batches):
         start = time.perf_counter()
@@ -170,10 +174,15 @@ def main(args: argparse.Namespace) -> None:
                     item[key] = value
 
             item["generated_text"] = output_text
-            item["index"] = start_index + batch_idx * batch_size + i  # Adjust index to match the original data
+            item["index"] = (
+                start_index + batch_idx * batch_size + i
+            )  # Adjust index to match the original data
             processed_data.append(item)
 
-        print(f"Processed batch {batch_idx + 1} in {time.perf_counter() - start:.2f}s", flush=True)
+        print(
+            f"Processed batch {batch_idx + 1} in {time.perf_counter() - start:.2f}s",
+            flush=True,
+        )
 
         if len(processed_data) >= batch_size * 2:
             write_results(processed_data, args.output_path, mode="a")
@@ -187,11 +196,19 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="scoring dataset by language model")
     parser.add_argument("--model-path", type=str)
     parser.add_argument("--jsonl-path", help="Path to the input JSONL file")
-    parser.add_argument("--output-path", help="Path to save the output JSONL file with Japanese entries")
-    parser.add_argument("--batch-size", type=int, default=8, help="Batch size for processing")
+    parser.add_argument(
+        "--output-path", help="Path to save the output JSONL file with Japanese entries"
+    )
+    parser.add_argument(
+        "--batch-size", type=int, default=8, help="Batch size for processing"
+    )
     parser.add_argument("--verbose", action="store_true", help="Print verbose output")
-    parser.add_argument("--resume", action="store_true", help="Resume from the last processed index")
-    parser.add_argument("--tensor-parallel", type=int, default=1, help="Tensor parallel size")
+    parser.add_argument(
+        "--resume", action="store_true", help="Resume from the last processed index"
+    )
+    parser.add_argument(
+        "--tensor-parallel", type=int, default=1, help="Tensor parallel size"
+    )
 
     args = parser.parse_args()
     main(args=args)
