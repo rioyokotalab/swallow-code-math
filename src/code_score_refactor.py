@@ -1,12 +1,36 @@
+import argparse
 import json
-import time
 import os
 import re
-import torch
-import argparse
-from transformers import AutoTokenizer
+import time
 
+from transformers import AutoTokenizer
 from vllm import LLM, SamplingParams
+
+
+instruction = """You are a smart software engineer. Please evaluate the following code on a scale of 1 to 10 based on the following criteria:\n
+1. Are variable names descriptive and consistent with naming conventions?
+2. Are comments and doc-strings appropriately written to explain the purpose and functionality of the code?
+3. Are type annotations used effectively where applicable?
+4. Are functions appropriately modularized, with well-defined responsibilities and clear separation of concerns?
+5. Are variables' lifetimes intentionally managed, avoiding frequent reassignment or overly long scopes?
+6. Is error handling implemented appropriately where necessary?
+7. Is the code properly indented and follows standard formatting guidelines?
+8. Do comments provide context and rationale, rather than merely describing what the code does?
+9. Are functions and classes designed with clear, single responsibilities?
+10. Is the code formatted in a way that enhances readability?\n\n
+And provide suggestions for improvement based on the evaluation criteria. You can also provide an improved version of the code like the following style:\n
+### Evaluation: 7\n\n
+### Suggestions:\n
+    Provide specific, actionable suggestions to improve the code based on the evaluation criteria.\n\n
+### Improved Code:\n
+Provide a revised version of the code incorporating the suggested improvements.\n
+```python\n
+def improved_function(arg1: int, arg2: str) -> str:
+    # Your improved code here
+    pass
+```\n\n
+"""
 
 
 def load_jsonl(file_path):
@@ -35,39 +59,39 @@ def parse_sections(text):
     current_section = None
     current_content = []
 
-    for line in text.split('\n'):
-        if line.startswith('###'):
+    for line in text.split("\n"):
+        if line.startswith("###"):
             if current_section:
-                sections[current_section] = '\n'.join(current_content).strip()
+                sections[current_section] = "\n".join(current_content).strip()
             current_section = line[4:].strip()  # eliminate ###
             current_content = []
         else:
             current_content.append(line)
 
     if current_section:
-        sections[current_section] = '\n'.join(current_content).strip()
+        sections[current_section] = "\n".join(current_content).strip()
 
     results = {}
 
     for section, content in sections.items():
-        if section.startswith('Evaluation:'):
-            score = section.split(':')[1].strip()
+        if section.startswith("Evaluation:"):
+            score = section.split(":")[1].strip()
             try:
                 score = float(score)
             except ValueError:
                 score = -1
-            results['evaluation_score'] = score
+            results["evaluation_score"] = score
 
-        elif section == 'Suggestions:':
-            results['suggestions'] = [s.strip() for s in content.split('\n') if s.strip()]
+        elif section == "Suggestions:":
+            results["suggestions"] = [s.strip() for s in content.split("\n") if s.strip()]
 
-        elif section == 'Improved Code:':
-            code_match = re.search(r'```python\n(.*?)\n```', content, re.DOTALL)
+        elif section == "Improved Code:":
+            code_match = re.search(r"```python\n(.*?)\n```", content, re.DOTALL)
             if code_match:
-                results['improved_code'] = code_match.group(1).strip()
+                results["improved_code"] = code_match.group(1).strip()
         else:
             # other sections
-            results[section.lower().replace(' ', '_')] = content
+            results[section.lower().replace(" ", "_")] = content
 
     return results
 
@@ -107,7 +131,7 @@ def main(args: argparse.Namespace) -> None:
 
     processed_data = []
     batch_size = args.batch_size
-    batches = [data[i:i + batch_size] for i in range(start_index, len(data), batch_size)]
+    batches = [data[i : i + batch_size] for i in range(start_index, len(data), batch_size)]
 
     for batch_idx, batch in enumerate(batches):
         start = time.perf_counter()
@@ -115,30 +139,7 @@ def main(args: argparse.Namespace) -> None:
         for item in batch:
             code_text: str = item["text"]
             messages: list[dict[str, str]] = [
-                {"role": "system", "content":
-                    """You are a smart software engineer. Please evaluate the following code on a scale of 1 to 10 based on the following criteria:\n
-                    1. Are variable names descriptive and consistent with naming conventions?
-                    2. Are comments and doc-strings appropriately written to explain the purpose and functionality of the code?
-                    3. Are type annotations used effectively where applicable?
-                    4. Are functions appropriately modularized, with well-defined responsibilities and clear separation of concerns?
-                    5. Are variables' lifetimes intentionally managed, avoiding frequent reassignment or overly long scopes?
-                    6. Is error handling implemented appropriately where necessary?
-                    7. Is the code properly indented and follows standard formatting guidelines?
-                    8. Do comments provide context and rationale, rather than merely describing what the code does?
-                    9. Are functions and classes designed with clear, single responsibilities?
-                    10. Is the code formatted in a way that enhances readability?\n\n
-                    And provide suggestions for improvement based on the evaluation criteria. You can also provide an improved version of the code like the following style:\n
-                    ### Evaluation: 7\n\n
-                    ### Suggestions:\n
-                        Provide specific, actionable suggestions to improve the code based on the evaluation criteria.\n\n
-                    ### Improved Code:\n
-                    Provide a revised version of the code incorporating the suggested improvements.\n
-                    ```python\n
-                    def improved_function(arg1: int, arg2: str) -> str:
-                        # Your improved code here
-                        pass
-                    ```\n\n
-                    """},
+                {"role": "system", "content": instruction},
                 {"role": "user", "content": code_text},
             ]
             text: str = tokenizer.apply_chat_template(  # type: ignore
@@ -171,7 +172,10 @@ def main(args: argparse.Namespace) -> None:
             item["index"] = start_index + batch_idx * batch_size + i  # Adjust index to match the original data
             processed_data.append(item)
 
-        print(f"Processed batch {batch_idx + 1} in {time.perf_counter() - start:.2f}s", flush=True)
+        print(
+            f"Processed batch {batch_idx + 1} in {time.perf_counter() - start:.2f}s",
+            flush=True,
+        )
 
         if len(processed_data) >= batch_size * 2:
             write_results(processed_data, args.output_path, mode="a")
