@@ -84,9 +84,7 @@ def parse_sections(text):
             results["evaluation_score"] = score
 
         elif section == "Suggestions:":
-            results["suggestions"] = [
-                s.strip() for s in content.split("\n") if s.strip()
-            ]
+            results["suggestions"] = [s.strip() for s in content.split("\n") if s.strip()]
 
         elif section == "Improved Code:":
             code_match = re.search(r"```python\n(.*?)\n```", content, re.DOTALL)
@@ -134,9 +132,7 @@ def main(args: argparse.Namespace) -> None:
 
     processed_data = []
     batch_size = args.batch_size
-    batches = [
-        data[i : i + batch_size] for i in range(start_index, len(data), batch_size)
-    ]
+    batches = [data[i : i + batch_size] for i in range(start_index, len(data), batch_size)]
 
     for batch_idx, batch in enumerate(batches):
         start = time.perf_counter()
@@ -174,9 +170,7 @@ def main(args: argparse.Namespace) -> None:
                     item[key] = value
 
             item["generated_text"] = output_text
-            item["index"] = (
-                start_index + batch_idx * batch_size + i
-            )  # Adjust index to match the original data
+            item["index"] = start_index + batch_idx * batch_size + i  # Adjust index to match the original data
             processed_data.append(item)
 
         print(
@@ -196,19 +190,11 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="scoring dataset by language model")
     parser.add_argument("--model-path", type=str)
     parser.add_argument("--jsonl-path", help="Path to the input JSONL file")
-    parser.add_argument(
-        "--output-path", help="Path to save the output JSONL file with Japanese entries"
-    )
-    parser.add_argument(
-        "--batch-size", type=int, default=8, help="Batch size for processing"
-    )
+    parser.add_argument("--output-path", help="Path to save the output JSONL file with Japanese entries")
+    parser.add_argument("--batch-size", type=int, default=8, help="Batch size for processing")
     parser.add_argument("--verbose", action="store_true", help="Print verbose output")
-    parser.add_argument(
-        "--resume", action="store_true", help="Resume from the last processed index"
-    )
-    parser.add_argument(
-        "--tensor-parallel", type=int, default=1, help="Tensor parallel size"
-    )
+    parser.add_argument("--resume", action="store_true", help="Resume from the last processed index")
+    parser.add_argument("--tensor-parallel", type=int, default=1, help="Tensor parallel size")
 
     args = parser.parse_args()
     main(args=args)
