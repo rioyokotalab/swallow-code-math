@@ -9,6 +9,31 @@ from transformers import AutoTokenizer
 from vllm import LLM, SamplingParams
 
 
+instruction = """You are a smart software engineer. Please evaluate the following code on a scale of 1 to 10 based on the following criteria:\n
+1. Are variable names descriptive and consistent with naming conventions?
+2. Are comments and doc-strings appropriately written to explain the purpose and functionality of the code?
+3. Are type annotations used effectively where applicable?
+4. Are functions appropriately modularized, with well-defined responsibilities and clear separation of concerns?
+5. Are variables' lifetimes intentionally managed, avoiding frequent reassignment or overly long scopes?
+6. Is error handling implemented appropriately where necessary?
+7. Is the code properly indented and follows standard formatting guidelines?
+8. Do comments provide context and rationale, rather than merely describing what the code does?
+9. Are functions and classes designed with clear, single responsibilities?
+10. Is the code formatted in a way that enhances readability?\n\n
+And provide suggestions for improvement based on the evaluation criteria. You can also provide an improved version of the code like the following style:\n
+### Evaluation: 7\n\n
+### Suggestions:\n
+    Provide specific, actionable suggestions to improve the code based on the evaluation criteria.\n\n
+### Improved Code:\n
+Provide a revised version of the code incorporating the suggested improvements.\n
+```python\n
+def improved_function(arg1: int, arg2: str) -> str:
+    # Your improved code here
+    pass
+```\n\n
+"""
+
+
 def load_jsonl(file_path):
     with open(file_path, "r", encoding="utf-8") as file:
         return [json.loads(line) for line in file]
@@ -115,30 +140,7 @@ def main(args: argparse.Namespace) -> None:
         for item in batch:
             code_text: str = item["text"]
             messages: list[dict[str, str]] = [
-                {"role": "system", "content":
-                    """You are a smart software engineer. Please evaluate the following code on a scale of 1 to 10 based on the following criteria:\n
-                    1. Are variable names descriptive and consistent with naming conventions?
-                    2. Are comments and doc-strings appropriately written to explain the purpose and functionality of the code?
-                    3. Are type annotations used effectively where applicable?
-                    4. Are functions appropriately modularized, with well-defined responsibilities and clear separation of concerns?
-                    5. Are variables' lifetimes intentionally managed, avoiding frequent reassignment or overly long scopes?
-                    6. Is error handling implemented appropriately where necessary?
-                    7. Is the code properly indented and follows standard formatting guidelines?
-                    8. Do comments provide context and rationale, rather than merely describing what the code does?
-                    9. Are functions and classes designed with clear, single responsibilities?
-                    10. Is the code formatted in a way that enhances readability?\n\n
-                    And provide suggestions for improvement based on the evaluation criteria. You can also provide an improved version of the code like the following style:\n
-                    ### Evaluation: 7\n\n
-                    ### Suggestions:\n
-                        Provide specific, actionable suggestions to improve the code based on the evaluation criteria.\n\n
-                    ### Improved Code:\n
-                    Provide a revised version of the code incorporating the suggested improvements.\n
-                    ```python\n
-                    def improved_function(arg1: int, arg2: str) -> str:
-                        # Your improved code here
-                        pass
-                    ```\n\n
-                    """},
+                {"role": "system", "content": instruction},
                 {"role": "user", "content": code_text},
             ]
             text: str = tokenizer.apply_chat_template(  # type: ignore
