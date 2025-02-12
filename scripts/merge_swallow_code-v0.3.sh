@@ -7,4 +7,4 @@ mkdir -p $output_dir
 
 python src/merge.py \
   --input-dir $input_dir \
-  --output-path $output_dir/swallow-code-v0.3-llm-refactor-no-repet.jsonl
+  --output-path $output_dir/swallow-code-v0.3-no-repet.jsonl
