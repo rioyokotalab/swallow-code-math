@@ -23,7 +23,7 @@ def process_jsonl(input_file: str, output_file: str) -> None:
                     if 'improved_code' in record and 'generated_text' in record and 'text' in record:
                         # 新しい形式のデータを作成
                         new_record = {
-                            'text': "You are a smart software engineer. Please evaluate the following code on a scale of 1 to 10 and provide feedback on how it can be improved. \n\n## Evaluation Code\n" + record['text'] + "\n\n## Feedback\n" + record['generated_text'],
+                            'text': "You are a smart software engineer. Please evaluate the following code on a scale of 1 to 10 and provide feedback on how it can be improved. \n\n## Evaluation Code\n```python\n" + record['text'] + "\n```\n\n## Feedback\n" + record['generated_text'],
                         }
                         # 直接ファイルに書き込み
                         fout.write(json.dumps(new_record, ensure_ascii=False) + '\n')
