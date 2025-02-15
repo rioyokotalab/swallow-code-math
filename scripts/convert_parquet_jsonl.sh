@@ -21,8 +21,8 @@ module load ninja/1.11.1
 
 source .env/bin/activate
 
-INPUT_DIR="/gs/bs/tgh-24IDU/datasets/open-coder/opc-fineweb-code-corpus/data"
-OUTPUT_DIR="/gs/bs/tgh-24IDU/datasets/open-coder/opc-fineweb-code-corpus/jsonl"
+INPUT_DIR="/gs/bs/hp190122/fujii/datasets/the-stack/data/python"
+OUTPUT_DIR="/gs/bs/hp190122/fujii/datasets/the-stack-v1-python-jsonl"
 
 echo "Converting Arrow files to JSONL in $INPUT_DIR"
 
