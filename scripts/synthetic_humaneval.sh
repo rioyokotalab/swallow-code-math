@@ -35,11 +35,21 @@ export VLLM_USE_V1=1
 export VLLM_WORKER_MULTIPROC_METHOD=spawn
 # https://github.com/vllm-project/vllm/issues/6152#issuecomment-2211709345
 
+ADD_INSTRUCTION_AND_CODE_BLOCK=1
+ARGS=""
+OUTPUT_FILE="$OUTPUT_DIR/humaneval_instruct_$FORMATTED_INDEX.jsonl"
+
+if [ $ADD_INSTRUCTION_AND_CODE_BLOCK -eq 1 ]; then
+  ARGS="$ARGS --add-instruct-question --add-code-block"
+  OUTPUT_FILE="$OUTPUT_DIR/humaneval_instruct_codeblock_$FORMATTED_INDEX.jsonl"
+fi
+
 python src/code_qa_humaneval.py \
   --model-path "/gs/bs/tga-NII-LLM/hf-checkpoints/Llama-3.3-70B-Instruct" \
   --jsonl-path "$INPUT_DIR/python_scoring_Llama-3.3-70B-split_$FORMATTED_INDEX.jsonl" \
-  --output-path "$OUTPUT_DIR/humaneval_instruct_$FORMATTED_INDEX.jsonl" \
+  --output-path "$OUTPUT_FILE" \
   --tensor-parallel 4 \
   --resume \
   --batch-size $BATCH_SIZE \
-  --verbose
+  --verbose \
+  $ARGS
