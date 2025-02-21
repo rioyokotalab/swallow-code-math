@@ -1,7 +1,7 @@
 #!/bin/sh
 #$ -cwd
 #$ -l node_f=1
-#$ -l h_rt=0:1:00:00
+#$ -l h_rt=0:24:00:00
 #$ -o outputs/llm-filter/llama-3.3-70b-instruct/$JOB_ID.log
 #$ -e outputs/llm-filter/llama-3.3-70b-instruct/$JOB_ID.log
 #$ -p -5
@@ -27,7 +27,7 @@ mkdir -p "$OUTPUT_DIR"
 INDEX=$1
 FORMATTED_INDEX=$(printf "%04d" $INDEX)
 
-BATCH_SIZE=16
+BATCH_SIZE=2048
 
 echo "batch size: $BATCH_SIZE"
 
