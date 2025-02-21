@@ -8,10 +8,9 @@ from transformers import AutoTokenizer
 from vllm import LLM, SamplingParams
 
 
-SYSTEM_PROMPT ='''You are a smart software engineer. Please provide a question code corresponding to the following full implementation code in Python.
-'''
-EXAMPLE_USER_PROMPT = \
-'''[Case 1]:
+SYSTEM_PROMPT = """You are a smart software engineer. Please provide a question code corresponding to the following full implementation code in Python.
+"""
+EXAMPLE_USER_PROMPT = '''[Case 1]:
 Full Implementation:
 ```python
 def solution(lst: list[int]) -> int:
@@ -25,8 +24,7 @@ def solution(lst: list[int]) -> int:
     return sum(lst[i] for i in range(0, len(lst), 2) if lst[i] % 2 != 0)
 ```
 '''
-EXAMPLE_ASSISTANT_PROMPT = \
-'''Question code:
+EXAMPLE_ASSISTANT_PROMPT = '''Question code:
 ```python
 def solution(lst: list[int]) -> int:
     """Given a non-empty list of integers, return the sum of all of the odd elements that are in even positions.
@@ -142,7 +140,9 @@ def main(args: argparse.Namespace) -> None:
                 improved_code_text = f"```python\n{improved_code_text}```"
 
             if args.add_instruct_question:
-                question_code = f"Please provide a solution code for the following sample code in Python.\n{question_code}"
+                question_code = (
+                    f"Please provide a solution code for the following sample code in Python.\n{question_code}"
+                )
 
             write_item = {
                 "input": {"role": "user", "content": question_code},
@@ -151,10 +151,13 @@ def main(args: argparse.Namespace) -> None:
                     {"role": "user", "content": question_code},
                     {"role": "assistant", "content": improved_code_text},
                 ],
-                "text": tokenizer.apply_chat_template([
-                    {"role": "user", "content": question_code},
-                    {"role": "assistant", "content": improved_code_text},
-                ], tokenize=False),
+                "text": tokenizer.apply_chat_template(
+                    [
+                        {"role": "user", "content": question_code},
+                        {"role": "assistant", "content": improved_code_text},
+                    ],
+                    tokenize=False,
+                ),
             }
 
             if args.verbose:
@@ -177,6 +180,7 @@ def main(args: argparse.Namespace) -> None:
     # Write any remaining processed data
     if processed_data:
         write_results(processed_data, args.output_path, mode="a")
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="scoring dataset by language model")

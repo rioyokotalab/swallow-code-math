@@ -2,15 +2,14 @@ import argparse
 import os
 import json
 
+
 def merge_jsonl_files(
     input_dir: str,
     output_file: str,
 ) -> None:
-
     with open(output_file, "w", encoding="utf-8") as outfile:
-
         for filename in os.listdir(input_dir):
-            if filename.endswith(".jsonl"):
+            if filename.endswith(".jsonl") or filename.endswith(".json"):
                 filepath = os.path.join(input_dir, filename)
                 with open(filepath, "r", encoding="utf-8") as infile:
                     for line in infile:
@@ -24,6 +23,7 @@ def merge_jsonl_files(
 
     print(f"Merged JSONL files saved to {output_file}")
 
+
 def main():
     # 引数をパースする
     parser = argparse.ArgumentParser(description="Merge JSONL files with optional filters.")
@@ -36,6 +36,7 @@ def main():
         args.input_dir,
         args.output_path,
     )
+
 
 if __name__ == "__main__":
     main()

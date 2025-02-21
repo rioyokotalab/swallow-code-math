@@ -185,6 +185,7 @@ def main(args: argparse.Namespace) -> None:
     if processed_data:
         write_results(processed_data, args.output_path, mode="a")
 
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="scoring dataset by language model")
     parser.add_argument("--model-path", type=str)

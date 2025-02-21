@@ -8,10 +8,9 @@ from transformers import AutoTokenizer
 from vllm import LLM, SamplingParams
 
 
-SYSTEM_PROMPT ='''You are a smart software engineer. Please provide a question sentence corresponding to the following implementation code.
-'''
-EXAMPLE_USER_PROMPT = \
-'''[Case 1]:
+SYSTEM_PROMPT = """You are a smart software engineer. Please provide a question sentence corresponding to the following implementation code.
+"""
+EXAMPLE_USER_PROMPT = '''[Case 1]:
 Implementation:
 ```python
 def solution(lst: list[int]) -> int:
@@ -25,10 +24,9 @@ def solution(lst: list[int]) -> int:
     return sum(lst[i] for i in range(0, len(lst), 2) if lst[i] % 2 != 0)
 ```
 '''
-EXAMPLE_ASSISTANT_PROMPT = \
-'''Question:
+EXAMPLE_ASSISTANT_PROMPT = """Question:
 Write Python program to calculate the sum of all of the odd elements that are in even positions in the given list lst.
-'''
+"""
 
 
 def load_jsonl(file_path):
@@ -125,10 +123,13 @@ def main(args: argparse.Namespace) -> None:
                     {"role": "user", "content": output_text},
                     {"role": "assistant", "content": improved_code_text},
                 ],
-                "text": tokenizer.apply_chat_template([
-                    {"role": "user", "content": output_text},
-                    {"role": "assistant", "content": improved_code_text},
-                ], tokenize=False),
+                "text": tokenizer.apply_chat_template(
+                    [
+                        {"role": "user", "content": output_text},
+                        {"role": "assistant", "content": improved_code_text},
+                    ],
+                    tokenize=False,
+                ),
             }
 
             if args.verbose:
@@ -151,6 +152,7 @@ def main(args: argparse.Namespace) -> None:
     # Write any remaining processed data
     if processed_data:
         write_results(processed_data, args.output_path, mode="a")
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="scoring dataset by language model")
