@@ -31,6 +31,9 @@ BATCH_SIZE=2048
 
 echo "batch size: $BATCH_SIZE"
 
+export TMPDIR="/gs/bs/tge-gc24sp03/cache"
+export TMP="/gs/bs/tge-gc24sp03/cache"
+
 export VLLM_USE_V1=1
 export VLLM_WORKER_MULTIPROC_METHOD=spawn
 # https://github.com/vllm-project/vllm/issues/6152#issuecomment-2211709345
