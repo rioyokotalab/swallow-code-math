@@ -1,7 +1,7 @@
 #!/bin/sh
 #$ -cwd
 #$ -l node_f=1
-#$ -l h_rt=0:24:00:00
+#$ -l h_rt=0:10:00:00
 #$ -o outputs/llm-filter/llama-3.3-70b-instruct/$JOB_ID.log
 #$ -e outputs/llm-filter/llama-3.3-70b-instruct/$JOB_ID.log
 #$ -p -5
@@ -38,7 +38,7 @@ export VLLM_USE_V1=1
 export VLLM_WORKER_MULTIPROC_METHOD=spawn
 # https://github.com/vllm-project/vllm/issues/6152#issuecomment-2211709345
 
-ADD_INSTRUCTION_AND_CODE_BLOCK=1
+ADD_INSTRUCTION_AND_CODE_BLOCK=0
 ARGS=""
 OUTPUT_FILE="$OUTPUT_DIR/mtbench_instruct_$FORMATTED_INDEX.jsonl"
 

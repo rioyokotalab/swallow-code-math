@@ -8,7 +8,7 @@ from transformers import AutoTokenizer
 from vllm import LLM, SamplingParams
 
 
-SYSTEM_PROMPT = """You are a smart software engineer. Please provide a question sentence corresponding to the following implementation code.
+SYSTEM_PROMPT = """You are a smart software engineer. Please provide question sentences corresponding to the following implementation code in detail.
 """
 EXAMPLE_USER_PROMPT = '''[Case 1]:
 Implementation:
@@ -114,7 +114,7 @@ def main(args: argparse.Namespace) -> None:
                 output_text = output_text[10:]
 
             if args.add_code_block:
-                improved_code_text = f"```python\n{improved_code_text}```"
+                improved_code_text = f"```python\n{improved_code_text}\n```"
 
             write_item = {
                 "input": {"role": "user", "content": output_text},
