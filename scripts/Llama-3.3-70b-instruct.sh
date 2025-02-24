@@ -4,7 +4,7 @@
 #$ -l h_rt=0:24:00:00
 #$ -o outputs/llm-filter/llama-3.3-70b-instruct/$JOB_ID.log
 #$ -e outputs/llm-filter/llama-3.3-70b-instruct/$JOB_ID.log
-#$ -p -5
+#$ -p -3
 
 # priority: -5: normal, -4: high, -3: highest
 
@@ -19,8 +19,8 @@ module load ninja/1.11.1
 
 source .env/bin/activate
 
-INPUT_DIR="/gs/bs/tga-NII-LLM/datasets/raw/pretrain/swallow-code-v0.1-3-split-jsonl"
-OUTPUT_DIR="/gs/bs/tga-NII-LLM/datasets/raw/pretrain/swallow-code-v0.3-jsonl"
+INPUT_DIR="/gs/bs/tga-NII-LLM/datasets/raw/pretrain/swallow-code-v0.1-1-split-jsonl"
+OUTPUT_DIR="/gs/bs/tga-NII-LLM/datasets/raw/pretrain/swallow-code-v0.3.1-jsonl"
 
 mkdir -p "$OUTPUT_DIR"
 
@@ -28,10 +28,14 @@ INDEX=$1
 FORMATTED_INDEX=$(printf "%04d" $INDEX)
 
 BATCH_SIZE=2048
-
 echo "batch size: $BATCH_SIZE"
 
+export TMPDIR="/gs/bs/tge-gc24sp03/cache"
+export TMP="/gs/bs/tge-gc24sp03/cache"
+
 export VLLM_USE_V1=1
+export VLLM_WORKER_MULTIPROC_METHOD=spawn
+# https://github.com/vllm-project/vllm/issues/6152#issuecomment-2211709345
 
 python src/code_score_refactor.py \
   --model-path "/gs/bs/tga-NII-LLM/hf-checkpoints/Llama-3.3-70B-Instruct" \
