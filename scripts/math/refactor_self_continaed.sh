@@ -29,7 +29,7 @@ OUTPUT_DIR="/groups/gcg51558/datasets/raw/pretrain/finemath-4plus-jsonl-refactor
 
 mkdir -p "$OUTPUT_DIR"
 
-INDEX=5
+INDEX=63
 FORMATTED_INDEX=$(printf "%05d" $INDEX)
 
 BATCH_SIZE=1024

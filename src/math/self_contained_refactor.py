@@ -81,7 +81,7 @@ def main(args: argparse.Namespace) -> None:
         tensor_parallel_size=args.tensor_parallel,
         dtype="bfloat16",
         gpu_memory_utilization=0.9,
-        max_model_len=102688,
+        max_model_len=131072,
     )
 
     # Load and process the JSONL file
@@ -127,6 +127,9 @@ def main(args: argparse.Namespace) -> None:
                 tokenize=False,
                 add_generation_prompt=True,
             )
+            if len(text) > 102688:
+                print(f"Skipping text with length {len(text)}")
+                continue
             texts.append(text)
 
         outputs = llm.generate(texts, sampling_params)
