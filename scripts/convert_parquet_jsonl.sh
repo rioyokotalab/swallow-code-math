@@ -1,38 +1,41 @@
 #!/bin/sh
-#$ -cwd
-#$ -l cpu_16=1
-#$ -l h_rt=0:24:00:00
-#$ -o outputs/convert/$JOB_ID.log
-#$ -e outputs/convert/$JOB_ID.log
-#$ -p -5
+#PBS -q rt_HF
+#PBS -N convert-parquet-jsonl
+#PBS -l select=1:ncpus=192:ngpus=8
+#PBS -l walltime=24:00:00
+#PBS -j oe
+#PBS -koed
+#PBS -V
+#PBS -o outputs/convert/
 
-# priority: -5: normal, -4: high, -3: highest
+cd $PBS_O_WORKDIR
+mkdir -p outputs/convert
 
-set -e
+echo "Nodes allocated to this job:"
+cat $PBS_NODEFILE
 
-# Load modules
-module use /gs/fs/tga-NII-LLM/modules/modulefiles
+source /etc/profile.d/modules.sh
+module use /home/acf15649kv/modules/modulefiles
 
-module load ylab/cuda/12.4
-module load ylab/cudnn/9.1.0
-module load ylab/nccl/cuda-12.4/2.21.5
-module load ylab/hpcx/2.17.1
-module load ninja/1.11.1
+module load cuda/12.8
+module load cudnn/9.7.0
+module load nccl/2.25.1-cuda12.8
+module load hpcx/2.21.0
 
 source .env/bin/activate
 
-INPUT_DIR="/gs/bs/hp190122/fujii/datasets/the-stack/data/python"
-OUTPUT_DIR="/gs/bs/hp190122/fujii/datasets/the-stack-v1-python-jsonl"
+INPUT_DIR="/groups/gcg51558/datasets/raw/instruct/OpenMathInstruct-2/data"
+OUTPUT_DIR="/groups/gcg51558/datasets/raw/instruct/OpenMathInstruct-2/jsonl"
 
 echo "Converting Arrow files to JSONL in $INPUT_DIR"
 
 mkdir -p "$OUTPUT_DIR"
 
-export TMPDIR="/gs/bs/tge-gc24sp03/cache"
-export TMP="/gs/bs/tge-gc24sp03/cache"
+export TMPDIR="/groups/gcg51558/fujii/tmp"
+export TMP="/groups/gcg51558/fujii/tmp"
 
-export HF_CACHE="/gs/bs/tge-gc24sp03/cache"
-export HF_HOME="/gs/bs/tge-gc24sp03/cache"
+export HF_CACHE="/groups/gcg51558/fujii/tmp"
+export HF_HOME="/groups/gcg51558/fujii/tmp"
 
 for INPUT_FILE in "$INPUT_DIR"/*.parquet; do
   FILENAME=$(basename "$INPUT_FILE")
@@ -45,7 +48,7 @@ for INPUT_FILE in "$INPUT_DIR"/*.parquet; do
 
   echo "Processing $INPUT_FILE"
 
-  python src/convert_parquet_to_jsonl.py \
+  python src/tools/convert_parquet_to_jsonl.py \
     --parquet-file "$INPUT_FILE" \
     --jsonl-file "$OUTPUT_FILE"
 done
