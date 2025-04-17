@@ -14,5 +14,5 @@ pip install --upgrade wheel cmake ninja packaging
 
 pip install -r requirements.txt
 
-pip install flashinfer-python -i https://flashinfer.ai/whl/cu124/torch2.5/
-
+pip install vllm
+pip install flashinfer-python -i https://flashinfer.ai/whl/cu124/torch2.6
