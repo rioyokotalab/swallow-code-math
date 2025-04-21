@@ -1,10 +1,10 @@
 #!/bin/bash
 
-input_dir="/gs/bs/tga-NII-LLM/datasets/raw/pretrain/swallow-code-v0.3-no-repet"
-output_dir="/gs/bs/tga-NII-LLM/datasets/raw/pretrain/swallow-code-v0.3-merged"
+input_dir="/gs/bs/hp190122/fujii/datasets/finemath/finemath-4plus-jsonl-rewriting"
+output_dir="/gs/bs/hp190122/fujii/datasets/finemath/finemath-4plus-merged"
 
 mkdir -p $output_dir
 
-python src/merge.py \
+python src/tools/merge.py \
   --input-dir $input_dir \
-  --output-path $output_dir/swallow-code-v0.3-no-repet.jsonl
+  --output-path $output_dir/swallow-math-rewriting.jsonl

@@ -1,6 +1,6 @@
 #!/bin/sh
 #$ -cwd
-#$ -l node_q=1
+#$ -l node_f=1
 #$ -l h_rt=0:24:00:00
 #$ -o outputs/math-rewriting/$JOB_ID.log
 #$ -e outputs/math-rewriting/$JOB_ID.log
@@ -26,7 +26,7 @@ mkdir -p "$OUTPUT_DIR"
 INDEX=$1
 FORMATTED_INDEX=$(printf "%05d" $INDEX)
 
-BATCH_SIZE=32
+BATCH_SIZE=512
 echo "batch size: $BATCH_SIZE"
 
 export TMPDIR="/gs/bs/hp190122/fujii/.cache"
@@ -39,6 +39,6 @@ python src/math/math_rewriting.py \
   --model-path "/gs/bs/tga-NII-LLM/hf-checkpoints/gemma-3-27b-it" \
   --jsonl-path "$INPUT_DIR/train-$FORMATTED_INDEX-of-00064.jsonl" \
   --output-path "$OUTPUT_DIR/train-$FORMATTED_INDEX.jsonl" \
-  --tensor-parallel 1 \
+  --tensor-parallel 4 \
   --resume \
   --batch-size $BATCH_SIZE

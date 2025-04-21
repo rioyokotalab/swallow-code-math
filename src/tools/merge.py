@@ -18,6 +18,9 @@ def merge_jsonl_files(
                         except json.JSONDecodeError:
                             print(f"Error parsing JSON in {filepath}")
                             continue
+                        if len(data["text"]) <= 10:
+                            print(f"Skipping short text in {filepath}: {data['text']}")
+                            continue
 
                         outfile.write(json.dumps(data, ensure_ascii=False) + "\n")
 
