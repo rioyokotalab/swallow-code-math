@@ -19,8 +19,8 @@ module load ninja/1.11.1
 
 source .env/bin/activate
 
-INPUT_DIR="/gs/bs/tga-NII-LLM/datasets/raw/pretrain/swallow-code-v0.1-1-split-jsonl"
-OUTPUT_DIR="/gs/bs/tga-NII-LLM/datasets/raw/pretrain/swallow-code-v0.3.1-jsonl"
+INPUT_DIR="/gs/bs/tga-NII-LLM/datasets/raw/pretrain/"
+OUTPUT_DIR="/gs/bs/tga-NII-LLM/datasets/raw/pretrain/swallow-code-v0.3-cpp"
 
 mkdir -p "$OUTPUT_DIR"
 
@@ -37,10 +37,10 @@ export VLLM_USE_V1=1
 export VLLM_WORKER_MULTIPROC_METHOD=spawn
 # https://github.com/vllm-project/vllm/issues/6152#issuecomment-2211709345
 
-python src/code_score_refactor.py \
+python src/code/pretrain_dataset/sgcr_cpp.py \
   --model-path "/gs/bs/tga-NII-LLM/hf-checkpoints/Llama-3.3-70B-Instruct" \
   --jsonl-path "$INPUT_DIR/split_$FORMATTED_INDEX.jsonl" \
-  --output-path "$OUTPUT_DIR/python_scoring_Llama-3.3-70B-split_$FORMATTED_INDEX.jsonl" \
+  --output-path "$OUTPUT_DIR/cpp_split_$FORMATTED_INDEX.jsonl" \
   --tensor-parallel 4 \
   --resume \
   --batch-size $BATCH_SIZE

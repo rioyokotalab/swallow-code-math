@@ -50,7 +50,7 @@ export VLLM_WORKER_MULTIPROC_METHOD=spawn
 
 export CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7
 
-python src/code/pretrain_dataset/code_score_refactor_rust.py \
+python src/code/pretrain_dataset/sgcr_rust.py \
   --model-path "/groups/gcg51558/hf_checkpoints/Llama-3.3-70B-Instruct" \
   --jsonl-path "$INPUT_DIR/data-$FORMATTED_INDEX-of-00012.arrow.jsonl" \
   --output-path "$OUTPUT_DIR/rust_split_$FORMATTED_INDEX.jsonl" \
