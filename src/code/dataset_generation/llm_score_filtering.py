@@ -5,12 +5,10 @@ from typing import Dict, Any
 
 def process_jsonl(input_file: str, output_file: str, min_score: float = 6.0) -> None:
     """
-    score が指定値以上のものを抽出し、'text' キーとして保存する
-
     Args:
-        input_file (str): 入力JSONLファイルのパス
-        output_file (str): 出力JSONLファイルのパス
-        min_score (float): 抽出する最小スコア（デフォルト: 6.0）
+        input_file (str):
+        output_file (str):
+        min_score (float): (default: 6.0)
     """
     try:
         processed_count = 0
@@ -26,37 +24,36 @@ def process_jsonl(input_file: str, output_file: str, min_score: float = 6.0) -> 
                     record = json.loads(line.strip())
 
                     if "text" in record and "score" in record:
-                        score = float(record["score"])  # 数値型に変換
+                        score = float(record["score"])
 
                         if score >= min_score:
                             new_record = {"text": record["text"]}
                             fout.write(json.dumps(new_record, ensure_ascii=False) + "\n")
                             extracted_count += 1
 
-                            # 進捗表示（10000件ごと）
                             if extracted_count % 10000 == 0:
-                                print(f"進捗: {processed_count}件中{extracted_count}件抽出済み")
+                                print(f"Progress: {extracted_count} records extracted in {processed_count} records")
 
                 except json.JSONDecodeError as e:
-                    print(f"警告: 不正なJSONライン: {line.strip()[:100]}...")
+                    print(f"Warning: Invalid JSON line: {line.strip()[:100]}...")
                     continue
                 except (ValueError, TypeError) as e:
-                    print(f"警告: スコアの変換エラー: {str(e)}")
+                    print(f"Warning: score convert error: {str(e)}")
                     continue
 
-        print(f"処理完了: 全{processed_count}件中{extracted_count}件のレコードを保存しました")
-        print(f"抽出率: {(extracted_count / processed_count * 100):.2f}%")
+        print(f"Processed Completed: All {processed_count} records | {extracted_count} records processed")
+        print(f"Processed Rate: {(extracted_count / processed_count * 100):.2f}%")
 
     except Exception as e:
-        print(f"エラーが発生しました: {str(e)}")
+        print(f"Error occurred: {str(e)}")
         raise
 
 
 def main():
-    parser = argparse.ArgumentParser(description="JSONLファイルからスコアが基準値以上のデータを抽出")
-    parser.add_argument("--input_file", required=True, help="入力JSONLファイルのパス")
-    parser.add_argument("--output_file", required=True, help="出力JSONLファイルのパス")
-    parser.add_argument("--min_score", type=float, default=6.0, help="抽出する最小スコア（デフォルト: 6.0）")
+    parser = argparse.ArgumentParser(description="Filter JSONL records by score")
+    parser.add_argument("--input_file", required=True)
+    parser.add_argument("--output_file", required=True)
+    parser.add_argument("--min_score", type=float, default=6.0)
 
     args = parser.parse_args()
     process_jsonl(args.input_file, args.output_file, args.min_score)
