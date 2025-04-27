@@ -35,7 +35,7 @@ export TMP="/gs/bs/hp190122/fujii/.cache"
 # https://docs.vllm.ai/en/stable/serving/env_vars.html
 export VLLM_CACHE_ROOT="/gs/bs/hp190122/fujii/.cache"
 
-python src/math/math_rewriting.py \
+python src/math/finemath-4+-rewrite-v2.py \
   --model-path "/gs/bs/tga-NII-LLM/hf-checkpoints/gemma-3-27b-it" \
   --jsonl-path "$INPUT_DIR/train-$FORMATTED_INDEX-of-00064.jsonl" \
   --output-path "$OUTPUT_DIR/train-$FORMATTED_INDEX.jsonl" \

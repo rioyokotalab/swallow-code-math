@@ -50,7 +50,7 @@ export VLLM_WORKER_MULTIPROC_METHOD=spawn
 
 export CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7
 
-python src/math/self_contained_refactor.py \
+python src/math/finemath-4+-rewrite-v1.py \
   --model-path "/groups/gcg51558/hf_checkpoints/Llama-3.3-70B-Instruct" \
   --jsonl-path "$INPUT_DIR/train-$FORMATTED_INDEX-of-00064.jsonl" \
   --output-path "$OUTPUT_DIR/split_$FORMATTED_INDEX.jsonl" \

@@ -3,7 +3,6 @@ import json
 import os
 import time
 
-from sympy import O
 from transformers import AutoTokenizer
 from vllm import LLM, SamplingParams
 
