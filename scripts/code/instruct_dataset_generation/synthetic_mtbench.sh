@@ -47,7 +47,7 @@ if [ $ADD_INSTRUCTION_AND_CODE_BLOCK -eq 1 ]; then
   OUTPUT_FILE="$OUTPUT_DIR/mtbench_instruct_codeblock_$FORMATTED_INDEX.jsonl"
 fi
 
-python src/code/instruct_dataset/code_qa_mtbench.py \
+python src/code/instruct_dataset/convert_mtbench_style.py \
   --model-path "/gs/bs/tga-NII-LLM/hf-checkpoints/Llama-3.3-70B-Instruct" \
   --jsonl-path "$INPUT_DIR/python_scoring_Llama-3.3-70B-split_$FORMATTED_INDEX.jsonl" \
   --output-path "$OUTPUT_FILE" \
