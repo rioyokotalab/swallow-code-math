@@ -37,7 +37,7 @@ export VLLM_USE_V1=1
 export VLLM_WORKER_MULTIPROC_METHOD=spawn
 # https://github.com/vllm-project/vllm/issues/6152#issuecomment-2211709345
 
-python src/code/pretrain_dataset/code_index_not_implemented.py \
+python src/code/pretrain_dataset/refactor_python.pyy \
   --model-path "/gs/bs/tga-NII-LLM/hf-checkpoints/Llama-3.3-70B-Instruct" \
   --jsonl-path "$INPUT_DIR/split_$FORMATTED_INDEX.jsonl" \
   --output-path "$OUTPUT_DIR/train_$FORMATTED_INDEX.jsonl" \
