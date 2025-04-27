@@ -4,23 +4,20 @@ import pyarrow as pa
 import pyarrow.ipc as ipc
 
 
-def convert_arrow_to_jsonl(arrow_file_path: str, jsonl_file_path: str):
+def convert_arrow_to_jsonl(arrow_file_path: str, jsonl_file_path: str) -> None:
     """
-    Arrow ファイルを読み込み、JSONL 形式で出力します。
+    read Arrow file and convert it to JSONL format.
     """
-    # Arrow ファイルをメモリマップでオープン
+    # read arrow file using pyarrow
     with pa.memory_map(arrow_file_path, "r") as source:
         try:
-            # ファイルフォーマットの Arrow ファイルとして読み込み
             reader = ipc.open_file(source)
         except pa.ArrowInvalid:
-            # ファイルがストリーム形式の場合はこちらを利用
+            # if the file is a stream, open it as a stream
             reader = ipc.open_stream(source)
 
         with open(jsonl_file_path, "w", encoding="utf-8") as jsonl_file:
-            # 各 RecordBatch ごとに処理
             for batch in reader:
-                # RecordBatch をリスト（各行を辞書として表現）に変換
                 rows = batch.to_pylist()
                 for row in rows:
                     json.dump(row, jsonl_file, ensure_ascii=False)

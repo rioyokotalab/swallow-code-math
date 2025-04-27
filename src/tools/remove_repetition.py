@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 import argparse
 import json
 import re
@@ -19,17 +18,14 @@ def parse_args():
 
 def contains_repetition(text: str) -> bool:
     """
-    以下2条件を満たせば True (反復あり) を返す:
-      1. 全体の文字数が1000以上
-      2. 連続した重複箇所(full_repeated)が100文字以上
-    判定のために以下の正規表現を利用:
-      - 連続するフレーズ(\1)の繰り返しを検出
+    If text meets the following conditions, return True.
+      1. length of text is equal to or greater than 1000
+      2. consecutive phrases of 100 characters or more are repeated
     """
-    # 1. 全体の文字数が1000以上かどうか
     if len(text) < 1000:
         return False
 
-    # 2. 重複箇所(full_repeated)が100文字以上か
+    # 2. Consecutive phrases of 100 characters or more are repeated
     pattern = re.compile(r"(.{100,})(\1)+", re.DOTALL)
 
     match = pattern.search(text)
@@ -59,18 +55,14 @@ def main():
             if not line:
                 continue
 
-            # JSONLなので1行=1レコード
+            # jsonl: 1 record = 1 sample
             record = json.loads(line)
             text = record.get("improved_code", "")
 
-            # 重複検出
             has_repetition = contains_repetition(text)
             if has_repetition:
                 print(f"Detected repetition in record {count_processed}", flush=True)
 
-            # 出力モードに応じてフィルタ
-            # include -> has_repetition == True のみ出力
-            # exclude -> has_repetition == False のみ出力
             if mode == "include" and has_repetition:
                 json.dump(record, fout, ensure_ascii=False)
                 fout.write("\n")

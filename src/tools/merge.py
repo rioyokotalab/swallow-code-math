@@ -28,7 +28,6 @@ def merge_jsonl_files(
 
 
 def main():
-    # 引数をパースする
     parser = argparse.ArgumentParser(description="Merge JSONL files with optional filters.")
     parser.add_argument("--input-dir", required=True, help="Directory containing JSONL files to merge")
     parser.add_argument("--output-path", required=True, help="Output file path for the merged JSONL file")

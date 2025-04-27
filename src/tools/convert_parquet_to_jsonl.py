@@ -4,10 +4,9 @@ import json
 from datasets import disable_caching
 
 
-def convert_parquet_to_jsonl(parquet_file_path: str, jsonl_file_path: str):
+def convert_parquet_to_jsonl(parquet_file_path: str, jsonl_file_path: str) -> None:
     dataset = load_dataset(path="parquet", data_files=parquet_file_path, split="train")
 
-    # JSONL形式で保存
     with open(jsonl_file_path, "w", encoding="utf-8") as jsonl_file:
         for record in dataset:
             json.dump(record, jsonl_file, ensure_ascii=False)
