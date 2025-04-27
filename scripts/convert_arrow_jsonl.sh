@@ -47,7 +47,7 @@ for INPUT_FILE in "$INPUT_DIR"/*.arrow; do
 
   echo "Processing $INPUT_FILE"
 
-  python src/convert_arrow_to_jsonl.py \
+  python src/tools/convert_arrow_to_jsonl.py \
     --arrow-file "$INPUT_FILE" \
     --jsonl-file "$OUTPUT_FILE"
 done
@@ -64,73 +64,3 @@ fi
 wc -l "$MERGE_FILE"
 
 echo "Done converting Arrow files to JSONL in $INPUT_DIR"
-
-INPUT_DIR="/gs/bs/tgh-24IDU/datasets/open-coder/opc-annealing-corpus/synthetic_code_snippet"
-OUTPUT_DIR=$INPUT_DIR-jsonl
-
-echo "Converting Arrow files to JSONL in $INPUT_DIR"
-mkdir -p "$OUTPUT_DIR"
-
-for INPUT_FILE in "$INPUT_DIR"/*.arrow; do
-  FILENAME=$(basename "$INPUT_FILE")
-  OUTPUT_FILE="$OUTPUT_DIR/${FILENAME%.parquet}.jsonl"
-
-  if [ -f "$OUTPUT_FILE" ]; then
-    echo "Skipping $INPUT_FILE"
-    continue
-  fi
-
-  echo "Processing $INPUT_FILE"
-
-  python src/convert_arrow_to_jsonl.py \
-    --arrow-file "$INPUT_FILE" \
-    --jsonl-file "$OUTPUT_FILE"
-done
-
-wc -l "$OUTPUT_DIR"/*.jsonl
-
-MERGE_FILE="$OUTPUT_DIR/merged.jsonl"
-if [ ! -f "$MERGE_FILE" ]; then
-  echo "Merging JSONL files in $OUTPUT_DIR"
-  cat "$OUTPUT_DIR"/*.jsonl > "$MERGE_FILE"
-fi
-
-wc -l "$MERGE_FILE"
-
-echo "Done converting Arrow files to JSONL in $INPUT_DIR"
-
-INPUT_DIR="/gs/bs/tgh-24IDU/datasets/open-coder/opc-annealing-corpus/synthetic_qa"
-OUTPUT_DIR=$INPUT_DIR-jsonl
-
-echo "Converting Arrow files to JSONL in $INPUT_DIR"
-mkdir -p "$OUTPUT_DIR"
-
-for INPUT_FILE in "$INPUT_DIR"/*.arrow; do
-  FILENAME=$(basename "$INPUT_FILE")
-  OUTPUT_FILE="$OUTPUT_DIR/${FILENAME%.parquet}.jsonl"
-
-  if [ -f "$OUTPUT_FILE" ]; then
-    echo "Skipping $INPUT_FILE"
-    continue
-  fi
-
-  echo "Processing $INPUT_FILE"
-
-  python src/convert_arrow_to_jsonl.py \
-    --arrow-file "$INPUT_FILE" \
-    --jsonl-file "$OUTPUT_FILE"
-done
-
-wc -l "$OUTPUT_DIR"/*.jsonl
-
-MERGE_FILE="$OUTPUT_DIR/merged.jsonl"
-if [ ! -f "$MERGE_FILE" ]; then
-  echo "Merging JSONL files in $OUTPUT_DIR"
-  cat "$OUTPUT_DIR"/*.jsonl > "$MERGE_FILE"
-fi
-
-wc -l "$MERGE_FILE"
-
-echo "Done converting Arrow files to JSONL in $INPUT_DIR"
-
-echo "All done!"

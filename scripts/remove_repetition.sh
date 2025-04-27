@@ -33,7 +33,7 @@ process_file() {
   local output_dir=$(dirname "${output_file}")
 
   mkdir -p "${output_dir}"
-  python src/remove_repetition.py \
+  python src/tools/remove_repetition.py \
     --input_path "${input_file}" \
     --output_path "${output_file}" \
     --mode exclude
