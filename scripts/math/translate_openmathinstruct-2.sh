@@ -50,7 +50,7 @@ export VLLM_WORKER_MULTIPROC_METHOD=spawn
 
 export CUDA_VISIBLE_DEVICES=0,1,2,3,4,5,6,7
 
-python src/math/translate_openmath_instruct.py \
+python src/math/translate-openmath-instruct-v2.py \
   --model-path "/groups/gcg51558/hf_checkpoints/Llama-3.3-70B-Instruct" \
   --jsonl-path "$INPUT_DIR/train-$FORMATTED_INDEX-of-00032.jsonl" \
   --output-path "$OUTPUT_DIR/train_$FORMATTED_INDEX.jsonl" \
