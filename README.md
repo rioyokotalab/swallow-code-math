@@ -1,37 +1,48 @@
-# Swallow Code Corpus
+![Swallow Code and Swallow Math](assets/swallow-code-math-logo.png)
 
-## References
+# Swallow Code and Swallow Math
 
-### Llama-3.3-70B-Instruct
+The effectiveness of large language models (LLMs) in mathematical reasoning and program synthesis is fundamentally limited by the quality of their pre-training corpora.
+We present two openly licensed datasets derived from public data under the Llama-3.1 License.
+**SwallowCode** (approximately 16.1 B tokens) is constructed by sequential syntax filtering, pylint-based style filtering, and a two-stage LLM rewriting procedure that first enforces style conformity and then rewrites each snippet into a self-contained, algorithmically efficient example.
+**SwallowMath** (approximately 2.3 B tokens) is obtained from Finemath-4+ through an LLM rewriting step that removes boiler-plate, restores missing context, and reformats solutions into concise, step-by-step explanations.
 
-chat template: https://ollama.com/library/llama3.3/blobs/948af2743fc7
+SwallowCode: https://huggingface.co/datasets/tokyotech-llm/swallow-code
 
-## swallow code v0.3
+SwallowMath: https://huggingface.co/datasets/tokyotech-llm/swallow-math
 
-### Installation
+## Data Pipeline 🧹
 
-Please see [scripts/install.sh](scripts/install.sh).
+### Swallow Code
 
-### Usage
+#### Programming Language Filter
 
-```bash
-qsub -g <group-name> scripts/Llama-3.3-70b-instruct.sh <index>
-```
+#### Python Syntax Error Filter
 
-## swallow code v0.3 instruct
+#### Linter Filter
 
-### Humaneval Style
+#### LLM Rewriting (SGCR)
 
-ref: https://github.com/openai/human-eval/blob/master/data/example_problem.jsonl
+#### LLM Rewriting (SGCR)
 
-```bash
-qsub -g <group-name> scripts/synthetic_humaneval.sh <index>
-```
+### Swallow Math
 
-### MT-Bench Style
+## Ablation Experiments
 
-ref: https://github.com/Stability-AI/FastChat/blob/jp-stable/fastchat/llm_judge/data/mt_bench/question.jsonl
+### Training
 
-```bash
-qsub -g <group-name> scripts/synthetic_mtbench.sh <index>
+### Evaluation
+
+## License 📜
+
+
+
+## Citation 
+```bibtex
+@article{swallow-code-math,
+  title={Rewriting Pre-Training Data: Boosting LLM Performance in Math and Code},
+  author={Kazuki Fujii},
+  journal={},
+  year={2025}
+}
 ```
