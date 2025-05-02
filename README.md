@@ -1,4 +1,4 @@
-<img src="https://huggingface.co/datasets/tokyotech-llm/swallow-math/resolve/main/figures/swallow-code-math-log.png" alt="SwallowMath Icon" width="600">
+<img src="assets/swallow-code-math-logo.png" alt="SwallowMath Icon" width="600">
 
 # SwallowCode and SwallowMath
 
@@ -19,7 +19,7 @@ The performance of LLMs in specialized domains, such as coding and mathematics, 
 - **SwallowCode**: Improves pass@1 by **+17.0** on HumanEval and **+17.7** on HumanEval+ compared to Stack-Edu in a 50B-token continual pre-training of Llama-3.1-8B.
 - **SwallowMath**: Boosts accuracy by **+12.4** on GSM8K and **+7.6** on MATH compared to FineMath-4+ in a similar setting.
 
-<img src="https://huggingface.co/datasets/tokyotech-llm/swallow-code/resolve/main/assets/code_dataset_compare.png" width="800"/>
+<img src="assets/code_dataset_compare.png" width="800"/>
 
 ## Data Pipelines 🧹
 
@@ -34,7 +34,8 @@ SwallowCode refines Python code from The-Stack-v2 through a four-stage pipeline,
    - **Style-Guided Code Rewriting (SGCR)**: Enforces Google Python Style Guide criteria using Llama-3.3-70B-Instruct, improving readability and consistency.
    - **Self-Contained Optimization Rewriting (SCOR)**: Ensures self-containment, optimizes algorithms, and transforms trivial snippets into educational examples.
 
-<img src="https://huggingface.co/datasets/tokyotech-llm/swallow-code/resolve/main/assets/data-pipeline.png" width="800"/>
+<img src="assets/data-pipeline.png" width="800"/>
+
 Caption: "Four-stage pipeline for SwallowCode: language filtering, syntax validation, linter filtering, and two-stage LLM rewriting (SGCR and SCOR)."*
 
 ### SwallowMath Pipeline
@@ -44,8 +45,6 @@ SwallowMath enhances FineMath-4+ through a tailored LLM rewriting pipeline using
 1. **Boilerplate Removal**: Eliminates web headers, footers, privacy notices, and metadata (e.g., timestamps).
 2. **Context Restoration**: Fills in missing information in incomplete questions or answers.
 3. **Explanation Reformatting**: Rewrites solutions into concise, step-by-step explanations for clarity and educational value.
-
-*Note: Insert a figure here (e.g., a flowchart similar to Figure 2 for SwallowCode) depicting the SwallowMath pipeline. Caption example: "LLM-driven rewriting pipeline for SwallowMath: boilerplate removal, context restoration, and explanation reformatting."*
 
 Pipeline details, including prompts and scripts, are available in this repository.
 
@@ -65,19 +64,17 @@ We conducted extensive ablation experiments to evaluate each pipeline stage, det
 - **SwallowCode**: Ablation datasets (exp1–exp13) are available in the `ablation/` directory of the [SwallowCode dataset](https://huggingface.co/datasets/tokyotech-llm/swallow-code). Experiment 11 (SCOR) achieves the highest performance (HumanEval: 0.5396, HumanEval+: 0.5445 at 50B tokens).
 - **SwallowMath**: Experiment 2 (rewritten FineMath-4+) outperforms the baseline (GSM8K: +12.4, MATH: +7.6).
 
-*Note: Insert a figure here (e.g., a bar chart from the paper, Figure 7 for SwallowMath or Figure 3–6 for SwallowCode) showing ablation results. Caption example: "Performance improvements across SwallowCode ablation experiments, with exp11-scor achieving the highest HumanEval and HumanEval+ scores."*
+<img src="assets/finemath-rewriting.png" width="800"/>
 
-Evaluation results and model checkpoints are available in the [SwallowCode](https://huggingface.co/collections/tokyotech-llm/swallowcode-6811c84ff647568547d4e443) and [SwallowMath](https://huggingface.co/datasets/tokyotech-llm/swallow-math) repositories.
+Caption: "FineMath-4+ rewriting: boilerplate removal, context restoration, and explanation reformatting."
+
+Evaluation results and model checkpoints are available in the [SwallowCode](https://huggingface.co/collections/tokyotech-llm/swallowcode-6811c84ff647568547d4e443) and [SwallowMath](https://huggingface.co/datasets/tokyotech-llm/swallow-math) collections.
 
 ## License 📜
 
 Both datasets are released under the [Llama 3.3 Community License](https://huggingface.co/datasets/tokyotech-llm/swallow-code/blob/main/LICENSE). Usage is subject to:
 - [The-Stack-v2’s licensing terms](https://huggingface.co/datasets/bigcode/the-stack-v2-train-smol-ids) for SwallowCode.
 - [CommonCrawl’s Terms of Use](https://commoncrawl.org/terms-of-use) for both datasets.
-
-## Contributing
-
-We welcome contributions to improve the pipelines, extend language support, or add new experiments. Please submit issues or pull requests to this repository. For details, see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Citation
 
