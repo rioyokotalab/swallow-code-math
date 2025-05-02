@@ -38,6 +38,8 @@ SwallowCode refines Python code from The-Stack-v2 through a four-stage pipeline,
 
 Caption: "Four-stage pipeline for SwallowCode: language filtering, syntax validation, linter filtering, and two-stage LLM rewriting (SGCR and SCOR)."*
 
+The job scripts for the SwallowCode pipeline are located in the [scripts/code/](scripts/code/) directory.
+
 ### SwallowMath Pipeline
 
 SwallowMath enhances FineMath-4+ through a tailored LLM rewriting pipeline using Llama-3.3-70B-Instruct:
@@ -48,9 +50,11 @@ SwallowMath enhances FineMath-4+ through a tailored LLM rewriting pipeline using
 
 Pipeline details, including prompts and scripts, are available in this repository.
 
+The FineMath-4+ rewriting job script is located in the [scripts/math/finemath-4+-rewrite-v1.sh](scripts/math/finemath-4%2B-rewrite-v1.sh) file.
+
 ## Ablation Experiments
 
-We conducted extensive ablation experiments to evaluate each pipeline stage, detailed in the [paper](https://arxiv.org/abs/XXXX.XXXXX). Key findings:
+We conducted extensive ablation experiments to evaluate each pipeline stage, detailed in the [paper](https://arxiv.org/abs/XXXX.XXXXX).
 
 ### Training
 - **Model**: Llama-3.1-8B, continually pre-trained for 50B tokens.
@@ -68,7 +72,7 @@ We conducted extensive ablation experiments to evaluate each pipeline stage, det
 
 Caption: "FineMath-4+ rewriting: boilerplate removal, context restoration, and explanation reformatting."
 
-Evaluation results and model checkpoints are available in the [SwallowCode](https://huggingface.co/collections/tokyotech-llm/swallowcode-6811c84ff647568547d4e443) and [SwallowMath](https://huggingface.co/datasets/tokyotech-llm/swallow-math) collections.
+Evaluation results and model checkpoints are available in the [SwallowCode](https://huggingface.co/collections/tokyotech-llm/swallowcode-6811c84ff647568547d4e443) and [SwallowMath](https://huggingface.co/collections/tokyotech-llm/swallowmath-6811c89a04efac7df2cd1b66) collections.
 
 ## License 📜
 
