@@ -36,6 +36,7 @@ python contamination_check.py \
 Dependencies: `pip install datasketch tqdm orjson xxhash`
 Author: ChatGPT (o3) 2025‑04‑25
 """
+
 from __future__ import annotations
 
 import argparse, glob, json, os, random, re, sys, multiprocessing as mp
@@ -48,10 +49,13 @@ from tqdm import tqdm
 # ───────────────────────────────────────────────────────── Tokenizer ──
 TOKEN_RE = re.compile(r"[A-Za-z_][A-Za-z0-9_]*|\d+|\S", re.ASCII)
 
+
 def tokenize(code: str) -> List[str]:
     return TOKEN_RE.findall(code)
 
+
 # ───────────────────────────────────── Benchmark processing utils ──
+
 
 def load_benchmark_texts(path: str) -> List[str]:
     """Load benchmark prompts/solutions from JSON or JSONL.
@@ -83,7 +87,9 @@ def load_benchmark_texts(path: str) -> List[str]:
                 texts = [d.get("prompt", "") + d.get("solution", "") for d in data]
     return texts
 
+
 # ─────────────────────────────────────────── Exact‑match phase ──
+
 
 def _exact_worker(args):
     shard, needles, json_field = args
@@ -98,7 +104,9 @@ def _exact_worker(args):
                 hits.append((shard, ln))
     return hits
 
+
 # ────────────────────────────────────────────────── MinHash utils ──
+
 
 def build_minhash(tokens: List[str], num_perm: int = 256) -> LeanMinHash:
     """Return a memory‑efficient LeanMinHash built from tokens."""
@@ -112,11 +120,13 @@ def build_bench_sigs(texts: List[str], num_perm=256, ngram=5):
     sigs = {}
     for i, doc in enumerate(texts):
         toks = tokenize(doc)
-        grams = [" ".join(toks[j:j + ngram]) for j in range(len(toks) - ngram + 1)]
+        grams = [" ".join(toks[j : j + ngram]) for j in range(len(toks) - ngram + 1)]
         sigs[i] = build_minhash(grams, num_perm)
     return sigs
 
+
 # ───────────────────────────── Reservoir sampling helper ──
+
 
 def reservoir_sample(reservoir: List[str], new_item: str, k: int, t: int):
     if len(reservoir) < k:
@@ -126,7 +136,9 @@ def reservoir_sample(reservoir: List[str], new_item: str, k: int, t: int):
         if j < k:
             reservoir[j] = new_item
 
+
 # ──────────────────────────────── MinHash sampling phase ──
+
 
 def minhash_sampling(shards: List[str], bench_sigs, sample_size=1_000_000, ngram=5, threshold=0.8, json_field="text"):
     # Build reservoir (unchanged)
@@ -152,7 +164,7 @@ def minhash_sampling(shards: List[str], bench_sigs, sample_size=1_000_000, ngram
         toks = tokenize(rec)
         if len(toks) < ngram:
             continue
-        grams = [" ".join(toks[j:j + ngram]) for j in range(len(toks) - ngram + 1)]
+        grams = [" ".join(toks[j : j + ngram]) for j in range(len(toks) - ngram + 1)]
         sig = build_minhash(grams)
         for cid in forest.query(sig, 3):  # top‑3 candidates
             bid = int(cid[1:])
@@ -162,7 +174,9 @@ def minhash_sampling(shards: List[str], bench_sigs, sample_size=1_000_000, ngram
                 break
     return flagged
 
+
 # ─────────────────────────────── Accuracy recomputation ──
+
 
 def recompute_accuracy(results_jsonl: str, contaminated_ids: Set[str]):
     passed = total = 0
@@ -176,7 +190,9 @@ def recompute_accuracy(results_jsonl: str, contaminated_ids: Set[str]):
                 passed += 1
     return passed / max(total, 1)
 
+
 # ───────────────────────────────────────────────────────── main ──
+
 
 def main():
     ap = argparse.ArgumentParser(description="Fast contamination checker")
@@ -225,6 +241,7 @@ def main():
     with open(args.output, "w", encoding="utf-8") as f:
         json.dump(report, f, indent=2, ensure_ascii=False)
     print(f"Report written to {args.output}")
+
 
 if __name__ == "__main__":
     main()

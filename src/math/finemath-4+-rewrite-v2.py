@@ -134,7 +134,6 @@ def main(args: argparse.Namespace) -> None:
         start = time.perf_counter()
         texts = []
         for item in batch:
-
             messages: list[dict[str, str]] = [
                 {"role": "system", "content": SYSTEM_PROMPT},
                 {"role": "user", "content": item["text"]},

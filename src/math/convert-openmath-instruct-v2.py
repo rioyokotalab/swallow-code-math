@@ -44,7 +44,7 @@ def process_files(input_dir: str, output_path: str) -> None:
         print(f"Processing {filename}...")
 
         # Read the JSONL file
-        with open(jsonl_file, 'r', encoding='utf-8') as f:
+        with open(jsonl_file, "r", encoding="utf-8") as f:
             for line_number, line in enumerate(f, 1):
                 try:
                     # Parse JSON line
@@ -69,7 +69,7 @@ def process_files(input_dir: str, output_path: str) -> None:
     os.makedirs(os.path.dirname(output_path), exist_ok=True)
 
     # Write all converted entries to the merged output JSONL file
-    with open(output_path, 'w', encoding='utf-8') as f:
+    with open(output_path, "w", encoding="utf-8") as f:
         for entry in all_converted_entries:
             f.write(json.dumps(entry, ensure_ascii=False) + "\n")
 
