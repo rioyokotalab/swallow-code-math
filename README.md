@@ -11,7 +11,7 @@
 - SwallowCode: [https://huggingface.co/datasets/tokyotech-llm/swallow-code](https://huggingface.co/datasets/tokyotech-llm/swallow-code)
 - SwallowMath: [https://huggingface.co/datasets/tokyotech-llm/swallow-math](https://huggingface.co/datasets/tokyotech-llm/swallow-math)
 
-**Paper**: [Rewriting Pre-Training Data: Boosting LLM Performance in Math and Code](https://arxiv.org/abs/XXXX.XXXXX)  
+**Paper**: [Rewriting Pre-Training Data Boosts LLM Performance in Math and Code](https://arxiv.org/abs/XXXX.XXXXX)
 
 ## Overview
 
@@ -59,7 +59,7 @@ We conducted extensive ablation experiments to evaluate each pipeline stage, det
 ### Training
 - **Model**: Llama-3.1-8B, continually pre-trained for 50B tokens.
 - **Data Mix**:
-  - SwallowCode: 16% code (8B tokens) + 84% multilingual text (Japanese Wikipedia, Japanese Swallow Corpus v2, English Cosmopedia, etc.).
+  - SwallowCode: 16% code (8B tokens) + 84% multilingual text.
   - SwallowMath: 4.79% math (2.4B tokens), 13% code, 82.2% text.
 - **Hardware**: 64 NVIDIA H100 GPUs on the TSUBAME supercomputer.
 - **Software**: Megatron-LM (core_r0.9.0), lm-evaluation-harness, BigCodeBench.
