@@ -83,12 +83,13 @@ Both datasets are released under the [Llama 3.3 Community License](https://huggi
 ## Citation
 
 ```bibtex
-@misc{fujii2025rewritingpretrainingdata,
-      title={Rewriting Pre-Training Data: Boosting LLM Performance in Math and Code},
+@misc{fujii2025rewritingpretrainingdataboosts,
+      title={Rewriting Pre-Training Data Boosts LLM Performance in Math and Code}, 
       author={Kazuki Fujii and Yukito Tajima and Sakae Mizuki and Hinari Shimada and Taihei Shiotani and Koshiro Saito and Masanari Ohi and Masaki Kawamura and Taishi Nakamura and Takumi Okamoto and Shigeki Ishida and Kakeru Hattori and Youmi Ma and Hiroya Takamura and Rio Yokota and Naoaki Okazaki},
       year={2025},
-      eprint={XXXX.XXXXX},
+      eprint={2505.02881},
       archivePrefix={arXiv},
-      primaryClass={cs.CL},
-      url={https://arxiv.org/abs/XXXX.XXXXX},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/2505.02881}, 
 }
+```
