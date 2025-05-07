@@ -11,7 +11,7 @@
 - SwallowCode: [https://huggingface.co/datasets/tokyotech-llm/swallow-code](https://huggingface.co/datasets/tokyotech-llm/swallow-code)
 - SwallowMath: [https://huggingface.co/datasets/tokyotech-llm/swallow-math](https://huggingface.co/datasets/tokyotech-llm/swallow-math)
 
-**Paper**: [Rewriting Pre-Training Data Boosts LLM Performance in Math and Code](https://arxiv.org/abs/XXXX.XXXXX)
+**Paper**: [Rewriting Pre-Training Data Boosts LLM Performance in Math and Code](https://arxiv.org/abs/2505.02881)
 
 ## Overview
 
