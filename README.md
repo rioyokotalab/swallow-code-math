@@ -8,8 +8,8 @@
 - **SwallowMath** (~2.3 billion tokens): A mathematical reasoning dataset derived from [FineMath-4+](https://huggingface.co/datasets/HuggingFaceTB/finemath) via LLM rewriting to remove boilerplate, restore missing context, and reformat solutions into concise, step-by-step explanations.
 
 **Datasets**:
-- SwallowCode: [https://huggingface.co/datasets/tokyotech-llm/swallow-code](https://huggingface.co/datasets/tokyotech-llm/swallow-code)
-- SwallowMath: [https://huggingface.co/datasets/tokyotech-llm/swallow-math](https://huggingface.co/datasets/tokyotech-llm/swallow-math)
+- SwallowCode: 🤗 [https://huggingface.co/datasets/tokyotech-llm/swallow-code](https://huggingface.co/datasets/tokyotech-llm/swallow-code)
+- SwallowMath: 🤗 [https://huggingface.co/datasets/tokyotech-llm/swallow-math](https://huggingface.co/datasets/tokyotech-llm/swallow-math)
 
 **Paper**: [Rewriting Pre-Training Data Boosts LLM Performance in Math and Code](https://arxiv.org/abs/2505.02881)
 
