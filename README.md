@@ -8,6 +8,7 @@
 - **SwallowMath** (~2.3 billion tokens): A mathematical reasoning dataset derived from [FineMath-4+](https://huggingface.co/datasets/HuggingFaceTB/finemath) via LLM rewriting to remove boilerplate, restore missing context, and reformat solutions into concise, step-by-step explanations.
 
 **Datasets**:
+
 - SwallowCode: [https://huggingface.co/datasets/tokyotech-llm/swallow-code](https://huggingface.co/datasets/tokyotech-llm/swallow-code)
 - SwallowMath: [https://huggingface.co/datasets/tokyotech-llm/swallow-math](https://huggingface.co/datasets/tokyotech-llm/swallow-math)
 
@@ -16,6 +17,7 @@
 ## Overview
 
 The performance of LLMs in specialized domains, such as coding and mathematics, is constrained by the quality of the pre-training data. SwallowCode and SwallowMath address this by transforming raw corpora into high-quality, curated datasets through advanced filtering and rewriting techniques. Our experiments demonstrate significant performance gains:
+
 - **SwallowCode**: Improves pass@1 by **+17.0** on HumanEval and **+17.7** on HumanEval+ compared to Stack-Edu in a 50B-token continual pre-training of Llama-3.1-8B.
 - **SwallowMath**: Boosts accuracy by **+12.4** on GSM8K and **+7.6** on MATH compared to FineMath-4+ in a similar setting.
 
@@ -28,7 +30,7 @@ The performance of LLMs in specialized domains, such as coding and mathematics, 
 SwallowCode refines Python code from The-Stack-v2 through a four-stage pipeline, reducing the dataset from 41M to 24.1M samples while enhancing quality:
 
 1. **Programming Language Filter**: Selects Python code exclusively to ensure consistency and facilitate automated evaluation.
-2. **Python Syntax Error Filter**: Uses Python’s `compile()` function to remove invalid code, reducing samples by 10.6% (from 41M to 37M).
+2. **Python Syntax Error Filter**: Uses Python’s `compile()` function to remove invalid code, reducing samples by 9.7% (from 41M to 37M).
 3. **Linter Filter**: Applies pylint with a score threshold of 7.0 and a custom comment penalty heuristic, further reducing samples by 34.3% (to 24.1M).
 4. **LLM Rewriting**:
    - **Style-Guided Code Rewriting (SGCR)**: Enforces Google Python Style Guide criteria using Llama-3.3-70B-Instruct, improving readability and consistency.
@@ -36,9 +38,21 @@ SwallowCode refines Python code from The-Stack-v2 through a four-stage pipeline,
 
 <img src="assets/data-pipeline.png" width="800"/>
 
-Caption: "Four-stage pipeline for SwallowCode: language filtering, syntax validation, linter filtering, and two-stage LLM rewriting (SGCR and SCOR)."*
+Caption: "Four-stage pipeline for SwallowCode: language filtering, syntax validation, linter filtering, and two-stage LLM rewriting (SGCR and SCOR)."
 
 The job scripts for the SwallowCode pipeline are located in the [scripts/code/](scripts/code/) directory.
+
+- `scripts/code/filter.sh`:
+  - syntax error checking, pylint scoring, and comment language detection.
+  - output jsonl's "analysis_results" fields contain the results of the python `compile()`
+  - output jsonl's "pylint_score" fields contain the results of the pylint score
+  - output jsonl's "language_type" fields contain the results of the comment language detection
+- `scripts/code/sgcr_python.sh`:
+  - LLM rewriting using Llama-3.3-70B-Instruct for SGCR
+  - output jsonl's "improved_code" fields contain the results of the SGCR
+- `scripts/code/scor_python.sh`:
+  - LLM rewriting using Llama-3.3-70B-Instruct for SCOR
+  - output jsonl's "text" fields contain the results of the SCOR
 
 ### SwallowMath Pipeline
 
@@ -52,11 +66,16 @@ Pipeline details, including prompts and scripts, are available in this repositor
 
 The FineMath-4+ rewriting job script is located in the [scripts/math/finemath-4+-rewrite-v1.sh](scripts/math/finemath-4%2B-rewrite-v1.sh) file.
 
+- `scripts/math/finemath-4+-rewrite-v1.sh`:
+  - LLM rewriting using Llama-3.3-70B-Instruct
+  - output jsonl's "text" fields contain the results of the rewriting
+
 ## Ablation Experiments
 
 We conducted extensive ablation experiments to evaluate each pipeline stage, detailed in the [paper](https://arxiv.org/abs/XXXX.XXXXX).
 
 ### Training
+
 - **Model**: Llama-3.1-8B, continually pre-trained for 50B tokens.
 - **Data Mix**:
   - SwallowCode: 16% code (8B tokens) + 84% multilingual text.
@@ -65,6 +84,7 @@ We conducted extensive ablation experiments to evaluate each pipeline stage, det
 - **Software**: Megatron-LM (core_r0.9.0), lm-evaluation-harness, BigCodeBench.
 
 ### Evaluation
+
 - **SwallowCode**: Ablation datasets (exp1–exp13) are available in the `ablation/` directory of the [SwallowCode dataset](https://huggingface.co/datasets/tokyotech-llm/swallow-code). Experiment 11 (SCOR) achieves the highest performance (HumanEval: 0.5396, HumanEval+: 0.5445 at 50B tokens).
 - **SwallowMath**: Experiment 2 (rewritten FineMath-4+) outperforms the baseline (GSM8K: +12.4, MATH: +7.6).
 
@@ -77,6 +97,7 @@ Evaluation results and model checkpoints are available in the [SwallowCode](http
 ## License 📜
 
 Both datasets are released under the [Llama 3.3 Community License](https://huggingface.co/datasets/tokyotech-llm/swallow-code/blob/main/LICENSE). Usage is subject to:
+
 - [The-Stack-v2’s licensing terms](https://huggingface.co/datasets/bigcode/the-stack-v2-train-smol-ids) for SwallowCode.
 - [CommonCrawl’s Terms of Use](https://commoncrawl.org/terms-of-use) for both datasets.
 
@@ -84,12 +105,12 @@ Both datasets are released under the [Llama 3.3 Community License](https://huggi
 
 ```bibtex
 @misc{fujii2025rewritingpretrainingdataboosts,
-      title={Rewriting Pre-Training Data Boosts LLM Performance in Math and Code}, 
+      title={Rewriting Pre-Training Data Boosts LLM Performance in Math and Code},
       author={Kazuki Fujii and Yukito Tajima and Sakae Mizuki and Hinari Shimada and Taihei Shiotani and Koshiro Saito and Masanari Ohi and Masaki Kawamura and Taishi Nakamura and Takumi Okamoto and Shigeki Ishida and Kakeru Hattori and Youmi Ma and Hiroya Takamura and Rio Yokota and Naoaki Okazaki},
       year={2025},
       eprint={2505.02881},
       archivePrefix={arXiv},
       primaryClass={cs.LG},
-      url={https://arxiv.org/abs/2505.02881}, 
+      url={https://arxiv.org/abs/2505.02881},
 }
 ```
